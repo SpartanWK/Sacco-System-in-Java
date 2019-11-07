@@ -1,11 +1,39 @@
 package sacco;
 
-public class Login extends javax.swing.JFrame {
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
+import java.awt.Color;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 
-    /**
-     * Creates new form Login
-     */
+public class Login extends javax.swing.JFrame{
+
+    Connection con;
+    PreparedStatement statement;
+    Statement st;
+    String cs;
+    String user;
+    String password;
+    String query;
+    String records;
+    ResultSet rs;
+    boolean nxt;
+    
     public Login() {
+        con = null;
+        st = null;
+        statement = null;
+        cs = "jdbc:mysql://localhost:3306/sacco_db";
+        user = "root";
+        password = "";
+        nxt = false;
+        
         initComponents();
     }
 
@@ -18,105 +46,204 @@ public class Login extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        login = new javax.swing.JButton();
-        pText = new javax.swing.JPasswordField();
-        uText = new javax.swing.JTextField();
-        uName = new javax.swing.JLabel();
-        pWord = new javax.swing.JLabel();
-        tittle1 = new javax.swing.JLabel();
-        tittle2 = new javax.swing.JLabel();
-        loginTittle = new javax.swing.JLabel();
-        LoginCheckBox = new javax.swing.JCheckBox();
-        copyRight = new javax.swing.JLabel();
+        logParentPanel = new javax.swing.JPanel();
+        loginBtn = new javax.swing.JButton();
+        forgotPass = new javax.swing.JLabel();
+        logCopyright = new javax.swing.JLabel();
+        logTitle1 = new javax.swing.JLabel();
+        loginHere1 = new javax.swing.JLabel();
+        logUsername1 = new javax.swing.JLabel();
+        logPass1 = new javax.swing.JLabel();
+        usernameText = new javax.swing.JTextField();
+        userPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Login to Kasacco");
+        setAutoRequestFocus(false);
+        setBackground(new java.awt.Color(190, 20, 220));
 
-        login.setText("Log In");
-        login.addActionListener(new java.awt.event.ActionListener() {
+        logParentPanel.setBackground(new java.awt.Color(133, 213, 245));
+        logParentPanel.setAutoscrolls(true);
+        logParentPanel.setFocusable(false);
+
+        loginBtn.setText("Log In");
+        loginBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loginActionPerformed(evt);
+                loginBtnActionPerformed(evt);
             }
         });
 
-        uName.setText("Username:");
+        forgotPass.setText("Forgot Password?");
+        forgotPass.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                forgotPassMouseClicked(evt);
+            }
+        });
 
-        pWord.setText("Password:");
+        logCopyright.setText("2019 © Kasacco Group. All Rights Reserved");
 
-        tittle1.setText("Karugutu Savings and Credit Co-Operative Society");
+        logTitle1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        logTitle1.setText("KARUGUTU SAVINGS AND CO-OPERATIVE SOCIETY ");
 
-        tittle2.setText("Information Management System");
+        loginHere1.setText("Administrator Login");
 
-        loginTittle.setText("Administrator Login");
+        logUsername1.setText("Username:");
 
-        LoginCheckBox.setText("Stay Logged In");
+        logPass1.setText("Password:");
 
-        copyRight.setText("2019 © Kasacco Group");
+        usernameText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                usernameTextActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout logParentPanelLayout = new javax.swing.GroupLayout(logParentPanel);
+        logParentPanel.setLayout(logParentPanelLayout);
+        logParentPanelLayout.setHorizontalGroup(
+            logParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(logParentPanelLayout.createSequentialGroup()
+                .addGroup(logParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(logParentPanelLayout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addComponent(logTitle1))
+                    .addGroup(logParentPanelLayout.createSequentialGroup()
+                        .addGap(163, 163, 163)
+                        .addGroup(logParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(loginHere1))))
+                .addGap(0, 88, Short.MAX_VALUE))
+            .addGroup(logParentPanelLayout.createSequentialGroup()
+                .addGroup(logParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(logParentPanelLayout.createSequentialGroup()
+                        .addGap(88, 88, 88)
+                        .addGroup(logParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(logUsername1)
+                            .addComponent(logPass1))
+                        .addGroup(logParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, logParentPanelLayout.createSequentialGroup()
+                                .addGap(43, 43, 43)
+                                .addComponent(userPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(logParentPanelLayout.createSequentialGroup()
+                                .addGap(45, 45, 45)
+                                .addComponent(usernameText, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(logParentPanelLayout.createSequentialGroup()
+                        .addGap(124, 124, 124)
+                        .addComponent(logCopyright))
+                    .addGroup(logParentPanelLayout.createSequentialGroup()
+                        .addGap(178, 178, 178)
+                        .addComponent(forgotPass)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        logParentPanelLayout.setVerticalGroup(
+            logParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(logParentPanelLayout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(logTitle1)
+                .addGap(18, 18, 18)
+                .addComponent(loginHere1)
+                .addGap(32, 32, 32)
+                .addGroup(logParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(usernameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(logUsername1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addGroup(logParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(userPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(logPass1))
+                .addGap(40, 40, 40)
+                .addComponent(loginBtn)
+                .addGap(43, 43, 43)
+                .addComponent(forgotPass)
+                .addGap(45, 45, 45)
+                .addComponent(logCopyright, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(92, 92, 92)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(uName)
-                                .addComponent(pWord))
-                            .addGap(48, 48, 48)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(loginTittle)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(uText, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                                    .addComponent(pText))))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(153, 153, 153)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(copyRight)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(login, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(LoginCheckBox))))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(tittle2)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(92, 92, 92)
-                        .addComponent(tittle1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(44, Short.MAX_VALUE))
+            .addComponent(logParentPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tittle1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tittle2, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addComponent(loginTittle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(uText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(uName))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(pText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pWord))
-                .addGap(15, 15, 15)
-                .addComponent(LoginCheckBox)
-                .addGap(14, 14, 14)
-                .addComponent(login)
-                .addGap(18, 18, 18)
-                .addComponent(copyRight)
-                .addGap(22, 22, 22))
+            .addComponent(logParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_loginActionPerformed
+        String usernam = usernameText.getText();
+        String pass = userPassword.getText();
+        
+        if(usernam.isEmpty() && pass.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Fields Can't be left Empty!");
+        }
+        try{
+          Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection(cs,user,password);
+            st = con.createStatement();
+            query = "SELECT * FROM login where userName='"+usernam+"' and password='"+pass+"'";
+      
+            rs =  st.executeQuery(query);
+            
+           if(rs.next()){
+               String username =rs.getString("userName");
+               String password =rs.getString("password");
+               if(pass.equals(password) && usernam.equals(username)){
+               
+               
+               dispose();
+               MainView mv = new MainView();
+               mv.setVisible(true);
+               
+           }
+           }
+           else{
+               JOptionPane.showMessageDialog(null,"Incorrect Username or Password!");
+               usernameText.setText("");
+               userPassword.setText("");
+               
+               usernameText.requestFocus();
+           }
+           }   
+     
+         catch(MySQLIntegrityConstraintViolationException esp){
+             JOptionPane.showMessageDialog(null, "Current user already exists");
+         }
+        catch(SQLException ex)
+                {
+                    ex.printStackTrace();
+                }
+        catch(ClassNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+     
+           
+        try {
+            if(rs!=null){
+               rs.close(); 
+            }
+            
+            if(con!=null){
+               con.close(); 
+            }
+            
+           
+        } catch (SQLException ex) {
+           
+        }
+    }//GEN-LAST:event_loginBtnActionPerformed
+
+    private void forgotPassMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_forgotPassMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_forgotPassMouseClicked
+
+    private void usernameTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_usernameTextActionPerformed
 
     /**
      * @param args the command line arguments
@@ -144,7 +271,7 @@ public class Login extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        new Login().setTitle("Login to Kasacco");
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -154,15 +281,15 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox LoginCheckBox;
-    private javax.swing.JLabel copyRight;
-    private javax.swing.JButton login;
-    private javax.swing.JLabel loginTittle;
-    private javax.swing.JPasswordField pText;
-    private javax.swing.JLabel pWord;
-    private javax.swing.JLabel tittle1;
-    private javax.swing.JLabel tittle2;
-    private javax.swing.JLabel uName;
-    private javax.swing.JTextField uText;
+    private javax.swing.JLabel forgotPass;
+    private javax.swing.JLabel logCopyright;
+    private javax.swing.JPanel logParentPanel;
+    private javax.swing.JLabel logPass1;
+    private javax.swing.JLabel logTitle1;
+    private javax.swing.JLabel logUsername1;
+    private javax.swing.JButton loginBtn;
+    private javax.swing.JLabel loginHere1;
+    private javax.swing.JPasswordField userPassword;
+    private javax.swing.JTextField usernameText;
     // End of variables declaration//GEN-END:variables
 }
